@@ -33,7 +33,7 @@ The data intentionally includes:
 
 ## Data Cleaning
 
-The notebook defines a `clean_data()` function that processes each purchase value.
+The notebook defines a `clean_data()` function that processes the purchase values.
 
 A value is considered valid when:
 
@@ -42,6 +42,35 @@ A value is considered valid when:
 3. Its numeric value is greater than or equal to zero
 
 Invalid values are separated rather than included in the calculations.
+
+Zero-value purchases are treated as valid (e.g. free items, vouchers, or fully discounted orders), so the lowest valid purchase is 0.0.
+
+### Core Cleaning Logic
+
+The project uses the following list-based cleaning function:
+
+```python
+def clean_data(values):
+    valid_values = []
+    invalid_values = []
+
+    for value in values:
+        if pd.isna(value):
+            invalid_values.append(value)
+        else:
+            try:
+                num = float(value)
+                if num >= 0:
+                    valid_values.append(num)
+                else:
+                    invalid_values.append(value)
+            except:
+                invalid_values.append(value)
+
+    return valid_values, invalid_values
+```
+
+This keeps the README aligned with the actual notebook rather than presenting a simplified version of the code.
 
 ## Analysis
 
@@ -66,7 +95,7 @@ After cleaning, the project calculates:
 
 ## Business Insight
 
-The cleaned dataset contains 9 valid purchases with total revenue of 1404.0. The average purchase value is 156.0, with the highest purchase at 500.0 and the lowest valid purchase at 0.0.
+6 of the 15 raw records were invalid or unusable, meaning roughly 40% of the input data required validation before the purchase metrics could be calculated.
 
 ## Technologies
 
